@@ -4,7 +4,7 @@ Created on Mon Jul 27 12:52:57 2026
 
 @author: Garrett
 
-copasi_figure.parser
+copasi_fig.parser
 
 Parse COPASI text exports into a normalized structure suitable for plotting.
 

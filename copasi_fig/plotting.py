@@ -14,8 +14,8 @@ This module stays independent from the GUI:
 
 Typical usage
 -------------
-from copasi_figure.parser import load_copasi_export
-from copasi_figure.plotting import plot_copasi_figure
+from copasi_fig.parser import load_copasi_export
+from copasi_fig.plotting import plot_copasi_figure
 
 df, info = load_copasi_export("example.txt")
 fig, ax = plot_copasi_figure(
@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from .parser import CopasiColumnInfo
-from .style import apply_theme, palette_for_series, set_publication_style
+from .style import apply_theme, palette_for_series
 
 __all__ = [
     "PlotOptions",
@@ -117,6 +117,11 @@ def plot_copasi_series(
     options: PlotOptions | None = None,
     ax: plt.Axes | None = None,
 ):
+    if ax is None:
+        fig, ax = plt.subplots(figsize=options.figsize)
+    else:
+        fig = ax.figure
+        ax.clear()
     """Plot one or more COPASI species on a single axes.
 
     Parameters
@@ -154,12 +159,12 @@ def plot_copasi_series(
     _clean_axes(ax, options.remove_top_right_spines)
 
     x = _to_numeric_series(df[info.time_column])
-    palette = palette_for_series(max(1, len(species_list) * 2))
+    palette = palette_for_series(max(1, len(species_list)))
 
-    color_index = 0
     plotted_any = False
 
-    for sp in species_list:
+    for i, sp in enumerate(species_list):
+        color = palette[i % len(palette)]
         measured_col = info.measured_columns.get(sp)
         fitted_col = info.fitted_columns.get(sp)
 
@@ -175,12 +180,11 @@ def plot_copasi_series(
                     yy,
                     linestyle=options.measured_linestyle,
                     marker=options.measured_marker,
-                    color=palette[color_index % len(palette)],
+                    color=color,
                     alpha=options.measured_alpha,
                     label=f"{sp} measured",
                 )
                 plotted_any = True
-                color_index += 1
 
         if options.show_fitted and fitted_col and fitted_col in df.columns:
             y = _to_numeric_series(df[fitted_col])
@@ -194,12 +198,12 @@ def plot_copasi_series(
                     yy,
                     linestyle=options.fitted_linestyle,
                     marker=options.fitted_marker,
-                    color=palette[color_index % len(palette)],
+                    color=color,
                     alpha=options.fitted_alpha,
                     label=f"{sp} fitted",
                 )
                 plotted_any = True
-                color_index += 1
+
 
     if not plotted_any:
         ax.text(
@@ -255,4 +259,4 @@ def plot_copasi_figure(
         species=species,
         options=options,
     )
-```
+

@@ -4,7 +4,7 @@ Created on Mon Jul 27 13:17:11 2026
 
 @author: Garrett
 
-copasi_figure
+copasi_fig
 
 Small toolkit for turning COPASI exports into publication-quality figures.
 """

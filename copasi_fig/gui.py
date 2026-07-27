@@ -4,7 +4,7 @@ Created on Mon Jul 27 13:15:01 2026
 
 @author: Garrett
 
-copasi_figure.gui
+copasi_fig.gui
 
 Tkinter GUI for loading COPASI exports and exporting publication-quality plots.
 
@@ -42,8 +42,8 @@ class CopasiFigureGUI(tk.Tk):
     def __init__(self) -> None:
         super().__init__()
         self.title("COPASI Figure Builder")
-        self.geometry("1320x840")
-        self.minsize(1120, 740)
+        self.geometry("1400x950")
+        self.minsize(1200, 900)
 
         set_publication_style()
 
@@ -170,7 +170,8 @@ class CopasiFigureGUI(tk.Tk):
         self.plot_frame = plot_frame
 
     def _build_plot_canvas(self) -> None:
-        self.fig, self.ax = plt.subplots(figsize=(7.2, 5.0), constrained_layout=True)
+        self.fig, self.ax = plt.subplots(figsize=(8.2, 5.4))
+        self.fig.subplots_adjust(left=0.12, right=0.98, bottom=0.14, top=0.93)
         self.canvas = FigureCanvasTkAgg(self.fig, master=self.plot_frame)
         self.canvas_widget = self.canvas.get_tk_widget()
         self.canvas_widget.pack(fill=tk.BOTH, expand=True)

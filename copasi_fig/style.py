@@ -4,7 +4,7 @@ Created on Mon Jul 27 13:13:06 2026
 
 @author: Garrett
 
-copasi_figure.style
+copasi_fig.style
 
 Matplotlib styling helpers for publication-quality COPASI figures.
 """
@@ -82,16 +82,25 @@ def apply_theme(theme: str = "publication") -> None:
     theme = theme.lower().strip()
 
     if theme in {"publication", "journal", "default"}:
-        set_publication_style(FigureStyle())
+        set_publication_style(
+            FigureStyle(
+                font_family="DejaVu Sans",
+                font_size=10,
+                line_width=1.8,
+                marker_size=4.5,
+                dpi=150,
+                save_dpi=600,
+            )
+        )
         return
 
     if theme == "nature":
         set_publication_style(
             FigureStyle(
                 font_family="DejaVu Sans",
-                font_size=10,
-                line_width=1.8,
-                marker_size=4.2,
+                font_size=11,
+                line_width=2.0,
+                marker_size=5.0,
                 dpi=150,
                 save_dpi=600,
             )
@@ -101,9 +110,9 @@ def apply_theme(theme: str = "publication") -> None:
     if theme == "acs":
         set_publication_style(
             FigureStyle(
-                font_family="DejaVu Sans",
+                font_family="DejaVu Serif",
                 font_size=9,
-                line_width=1.6,
+                line_width=1.5,
                 marker_size=4.0,
                 dpi=150,
                 save_dpi=600,
@@ -112,8 +121,8 @@ def apply_theme(theme: str = "publication") -> None:
         return
 
     raise ValueError(f"Unknown theme: {theme}")
-
-
+    
+    
 def palette_for_series(n: int) -> Sequence[str]:
     """Return a colorblind-safe palette sized for n series."""
     base = [
