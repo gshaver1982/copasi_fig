@@ -48,9 +48,8 @@ __all__ = [
 
 @dataclass(frozen=True)
 class PlotOptions:
-    """Configuration options for a COPASI plot."""
-
     theme: str = "publication"
+    palette_name: str = "tab10"
     figsize: tuple[float, float] = (7.0, 4.8)
     xlabel: str | None = None
     ylabel: str | None = None
@@ -69,7 +68,8 @@ class PlotOptions:
     fitted_linestyle: str = "-"
     measured_alpha: float = 1.0
     fitted_alpha: float = 1.0
-
+    line_width: float = 1.8
+    marker_size: float = 4.5
 
 def _clean_axes(ax: plt.Axes, remove_top_right_spines: bool = True) -> None:
     """Apply a simple journal-style axis appearance."""
@@ -152,14 +152,15 @@ def plot_copasi_series(
         raise KeyError(f"Time column not found: {info.time_column}")
 
     if ax is None:
-        fig, ax = plt.subplots(figsize=options.figsize, constrained_layout=options.tight_layout)
+        fig, ax = plt.subplots(figsize=options.figsize)
     else:
         fig = ax.figure
+        ax.clear()
 
     _clean_axes(ax, options.remove_top_right_spines)
 
     x = _to_numeric_series(df[info.time_column])
-    palette = palette_for_series(max(1, len(species_list)))
+    palette = palette_for_series(max(1, len(species_list)), options.palette_name)
 
     plotted_any = False
 
@@ -180,8 +181,10 @@ def plot_copasi_series(
                     yy,
                     linestyle=options.measured_linestyle,
                     marker=options.measured_marker,
+                    markersize=options.marker_size,
                     color=color,
                     alpha=options.measured_alpha,
+                    linewidth=0.0,
                     label=f"{sp} measured",
                 )
                 plotted_any = True
@@ -200,6 +203,7 @@ def plot_copasi_series(
                     marker=options.fitted_marker,
                     color=color,
                     alpha=options.fitted_alpha,
+                    linewidth=options.line_width,
                     label=f"{sp} fitted",
                 )
                 plotted_any = True

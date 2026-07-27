@@ -123,20 +123,28 @@ def apply_theme(theme: str = "publication") -> None:
     raise ValueError(f"Unknown theme: {theme}")
     
     
-def palette_for_series(n: int) -> Sequence[str]:
-    """Return a colorblind-safe palette sized for n series."""
-    base = [
-        "#1f77b4",
-        "#ff7f0e",
-        "#2ca02c",
-        "#d62728",
-        "#9467bd",
-        "#8c564b",
-        "#e377c2",
-        "#7f7f7f",
-        "#bcbd22",
-        "#17becf",
-    ]
+def palette_for_series(n: int, palette: str = "tab10") -> Sequence[str]:
+    """Return a palette sized for n series."""
+    palettes = {
+        "tab10": [
+            "#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd",
+            "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf",
+        ],
+        "colorblind": [
+            "#0072B2", "#E69F00", "#009E73", "#D55E00", "#CC79A7",
+            "#56B4E9", "#F0E442", "#000000",
+        ],
+        "grayscale": [
+            "#111111", "#333333", "#555555", "#777777", "#999999",
+            "#BBBBBB",
+        ],
+        "muted": [
+            "#4C72B0", "#55A868", "#C44E52", "#8172B2", "#CCB974",
+            "#64B5CD",
+        ],
+    }
+
+    base = palettes.get(palette, palettes["tab10"])
     if n <= len(base):
         return base[:n]
 

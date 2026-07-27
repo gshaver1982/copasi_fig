@@ -50,6 +50,12 @@ class CopasiFigureGUI(tk.Tk):
         self.df: Optional[pd.DataFrame] = None
         self.info: Optional[CopasiColumnInfo] = None
         self.current_path: Optional[Path] = None
+        
+        self.palette = tk.StringVar(value="tab10")
+        self.measured_marker = tk.StringVar(value="o")
+        self.fitted_linestyle = tk.StringVar(value="-")
+        self.line_width = tk.DoubleVar(value=1.8)
+        self.marker_size = tk.DoubleVar(value=4.5)
 
         self.selected_species = tk.StringVar(value="")
         self.output_dir = tk.StringVar(value=str(Path.home()))
@@ -97,6 +103,47 @@ class CopasiFigureGUI(tk.Tk):
         )
         self.theme_combo.pack(fill=tk.X, pady=(0, 8))
         self.theme_combo.bind("<<ComboboxSelected>>", lambda _: self.update_plot())
+
+        style_box = ttk.LabelFrame(left, text="Style", padding=10)
+        style_box.pack(fill=tk.X, pady=(0, 10))
+        
+        ttk.Label(style_box, text="Color palette").pack(anchor="w")
+        palette_combo = ttk.Combobox(
+            style_box,
+            state="readonly",
+            values=["tab10", "colorblind", "grayscale", "muted"],
+            textvariable=self.palette,
+        )
+        palette_combo.pack(fill=tk.X, pady=(0, 8))
+        palette_combo.bind("<<ComboboxSelected>>", lambda _: self.update_plot())
+        
+        ttk.Label(style_box, text="Measured marker").pack(anchor="w")
+        marker_combo = ttk.Combobox(
+            style_box,
+            state="readonly",
+            values=["o", "s", "^", "D", "x", ".", "None"],
+            textvariable=self.measured_marker,
+        )
+        marker_combo.pack(fill=tk.X, pady=(0, 8))
+        marker_combo.bind("<<ComboboxSelected>>", lambda _: self.update_plot())
+        
+        ttk.Label(style_box, text="Fitted line style").pack(anchor="w")
+        line_combo = ttk.Combobox(
+            style_box,
+            state="readonly",
+            values=["-", "--", "-.", ":"],
+            textvariable=self.fitted_linestyle,
+        )
+        line_combo.pack(fill=tk.X, pady=(0, 8))
+        line_combo.bind("<<ComboboxSelected>>", lambda _: self.update_plot())
+        
+        ttk.Label(style_box, text="Line width").pack(anchor="w")
+        ttk.Scale(style_box, from_=0.5, to=4.0, orient=tk.HORIZONTAL, variable=self.line_width,
+                  command=lambda _: self.update_plot()).pack(fill=tk.X, pady=(0, 8))
+        
+        ttk.Label(style_box, text="Marker size").pack(anchor="w")
+        ttk.Scale(style_box, from_=2.0, to=10.0, orient=tk.HORIZONTAL, variable=self.marker_size,
+                  command=lambda _: self.update_plot()).pack(fill=tk.X)
 
         ttk.Label(controls, text="Figure title").pack(anchor="w")
         ttk.Entry(controls, textvariable=self.figure_title).pack(fill=tk.X, pady=(0, 8))
@@ -281,12 +328,17 @@ class CopasiFigureGUI(tk.Tk):
 
         options = PlotOptions(
             theme=self.theme.get().strip(),
+            palette_name=self.palette.get().strip(),
             xlabel=self.xlabel.get().strip() or None,
             ylabel=self.ylabel.get().strip() or None,
             title=self.figure_title.get().strip() or None,
             show_measured=self.show_measured.get(),
             show_fitted=self.show_fitted.get(),
             normalize=self.normalize.get(),
+            measured_marker=None if self.measured_marker.get() == "None" else self.measured_marker.get(),
+            fitted_linestyle=self.fitted_linestyle.get(),
+            line_width=float(self.line_width.get()),
+            marker_size=float(self.marker_size.get()),
         )
 
         try:
